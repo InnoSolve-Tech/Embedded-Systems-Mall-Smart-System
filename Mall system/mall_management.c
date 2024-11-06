@@ -51,21 +51,33 @@ void save_mall_config(void) {
 }
 
 void process_management_command(char* command) {
-    if (strncmp(command, "rent ", 5) == 0) {
-        uint16_t new_rent;
-        sscanf(command + 5, "%hu", &new_rent);
-        set_base_rent(new_rent);
-    } else if (strncmp(command, "escalator ", 10) == 0) {
-        uint8_t floor, state;
-        sscanf(command + 10, "%hhu %hhu", &floor, &state);
-        toggle_escalator(floor, state);
-    } else if (strncmp(command, "disable ", 8) == 0) {
-        uint8_t tenant_id;
-        sscanf(command + 8, "%hhu", &tenant_id);
-        disable_tenant_account(tenant_id);
-    } else {
-        uart_print("Unknown management command\n");
-    }
+	if (strncmp(command, "rent ", 5) == 0) {
+		uint16_t new_rent;
+		sscanf(command + 5, "%hu", &new_rent);
+		set_base_rent(new_rent);
+		uart_print("\r\n");  // Add new line
+		} else if (strncmp(command, "escalator ", 10) == 0) {
+		uint8_t floor, state;
+		sscanf(command + 10, "%hhu %hhu", &floor, &state);
+		toggle_escalator(floor, state);
+		uart_print("\r\n");  // Add new line
+		} else if (strncmp(command, "disable ", 8) == 0) {
+		uint8_t tenant_id;
+		sscanf(command + 8, "%hhu", &tenant_id);
+		disable_tenant_account(tenant_id);
+		uart_print("\r\n");  // Add new line
+		} else if (strcmp(command, "earnings") == 0) {
+		view_total_earnings();
+		uart_print("\r\n");  // Add new line
+		} else {
+		uart_print("Unknown management command\r\n");
+	}
+}
+
+void view_total_earnings(void) {
+	char response[50];
+	sprintf(response, "Total earnings: $%lu\r\n", total_earnings);
+	uart_print(response);
 }
 
 void set_base_rent(uint16_t rent) {
